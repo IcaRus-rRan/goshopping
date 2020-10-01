@@ -3,6 +3,12 @@ import VueRouter from 'vue-router'
 
 Vue.use(VueRouter)
 
+// 引用这句话点击相同的路由不会报错
+const originalPush = VueRouter.prototype.push
+   VueRouter.prototype.push = function push(location) {
+   return originalPush.call(this, location).catch(err => err)
+}
+
 const Home = () => import('../views/home/Home.vue')
 const Category = () => import('../views/category/Category.vue')
 const Shopcart = () => import('../views/shopcart/Shopcart.vue')

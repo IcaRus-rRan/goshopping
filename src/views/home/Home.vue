@@ -6,17 +6,107 @@
 				<h4>购物街</h4>
 			</template>
 		</nav-bar>
-		<home-swiper :banner='banner'/>
-		<recommond-view :recommend='recommend'/>
-		<feature-view/>
-		<span>首页content</span>
+
+		<scroll class="content" 
+						ref="scroll" 
+						:probe-type="3" 
+						:pull-up-load="true"
+						@scroll='contentScroll'
+						@pullingUp='loadMore'
+						>
+			<Home-swiper :banner='banner' />
+			<recommond-view :recommend='recommend' />
+			<feature-view />
+			<tab-control :tabs="tabs" 
+						 @tabClick="tabClick" />
+			<goods-list :goods='goods[currentType].list' />
+			<ul>
+				<li>liebiaoshuju1</li>
+				<li>liebiaoshuju2</li>
+				<li>liebiaoshuju3</li>
+				<li>liebiaoshuju4</li>
+				<li>liebiaoshuju5</li>
+				<li>liebiaoshuju6</li>
+				<li>liebiaoshuju7</li>
+				<li>liebiaoshuju8</li>
+				<li>liebiaoshuju9</li>
+				<li>liebiaoshuju10</li>
+				<li>liebiaoshuju11</li>
+				<li>liebiaoshuju12</li>
+				<li>liebiaoshuju13</li>
+				<li>liebiaoshuju14</li>
+				<li>liebiaoshuju15</li>
+				<li>liebiaoshuju16</li>
+				<li>liebiaoshuju17</li>
+				<li>liebiaoshuju18</li>
+				<li>liebiaoshuju19</li>
+				<li>liebiaoshuju20</li>
+				<li>liebiaoshuju11</li>
+				<li>liebiaoshuju12</li>
+				<li>liebiaoshuju13</li>
+				<li>liebiaoshuju14</li>
+				<li>liebiaoshuju15</li>
+				<li>liebiaoshuju16</li>
+				<li>liebiaoshuju17</li>
+				<li>liebiaoshuju18</li>
+				<li>liebiaoshuju19</li>
+				<li>liebiaoshuju20</li>
+				<li>liebiaoshuju11</li>
+				<li>liebiaoshuju12</li>
+				<li>liebiaoshuju13</li>
+				<li>liebiaoshuju14</li>
+				<li>liebiaoshuju15</li>
+				<li>liebiaoshuju16</li>
+				<li>liebiaoshuju17</li>
+				<li>liebiaoshuju18</li>
+				<li>liebiaoshuju19</li>
+				<li>liebiaoshuju20</li>
+				<li>liebiaoshuju11</li>
+				<li>liebiaoshuju12</li>
+				<li>liebiaoshuju13</li>
+				<li>liebiaoshuju14</li>
+				<li>liebiaoshuju15</li>
+				<li>liebiaoshuju16</li>
+				<li>liebiaoshuju17</li>
+				<li>liebiaoshuju18</li>
+				<li>liebiaoshuju19</li>
+				<li>liebiaoshuju20</li>
+				<li>liebiaoshuju11</li>
+				<li>liebiaoshuju12</li>
+				<li>liebiaoshuju13</li>
+				<li>liebiaoshuju14</li>
+				<li>liebiaoshuju15</li>
+				<li>liebiaoshuju16</li>
+				<li>liebiaoshuju17</li>
+				<li>liebiaoshuju18</li>
+				<li>liebiaoshuju19</li>
+				<li>liebiaoshuju20</li>
+				<li>liebiaoshuju11</li>
+				<li>liebiaoshuju12</li>
+				<li>liebiaoshuju13</li>
+				<li>liebiaoshuju14</li>
+				<li>liebiaoshuju15</li>
+				<li>liebiaoshuju16</li>
+				<li>liebiaoshuju17</li>
+				<li>liebiaoshuju18</li>
+				<li>liebiaoshuju19</li>
+				<li>liebiaoshuju20</li>
+			</ul>
+		</scroll>
+
+		<back-top @click.native="backClick" v-show="isShow" />
 	</div>
 </template>
 
 <script>
-	import { getHomeMultidata } from 'network/home'
+	import { getHomeMultidata, getHomeGoods } from 'network/home'
 
 	import NavBar from 'components/common/navbar/NavBar.vue'
+	import TabControl from 'components/common/tabControl/TabControl.vue'
+	import GoodsList from 'components/content/goodslist/GoodsList.vue'
+	import Scroll from "components/common/scroll/Scroll";
+	import BackTop from "components/content/backtop/BackTop"
+
 	import HomeSwiper from "./childCpns/HomeSwiper";
 	import RecommondView from "./childCpns/RecommendView";
 	import FeatureView from "./childCpns/FeatureView";
@@ -28,31 +118,110 @@
 				banner: [],
 				recommend: [],
 				keywords: [],
-				dKeyword: []
+				dKeyword: [],
+
+				tabs: ['流行', '新款', '精选'],
+				goods: {
+					'pop': { page: 0, list: [] },
+					'new': { page: 0, list: [] },
+					'sell': { page: 0, list: [] }
+				},
+				currentType: 'pop',
+				isShow: false
 			}
 		},
 		components: {
 			NavBar,
+			TabControl,
+			GoodsList,
+			Scroll,
+			BackTop,
 			HomeSwiper,
 			RecommondView,
-			FeatureView
+			FeatureView,
+		},
+		methods: {
+			getHomeMultidata() {
+				getHomeMultidata().then(res => {
+					// console.log(res);
+					this.banner = res.data.data.banner.list;
+					this.recommend = res.data.data.recommend.list;
+					this.keywords = res.data.data.keywords.list;
+					this.dKeyword = res.data.data.dKeyword.list;
+				}).catch(err => {
+					console.log(err);
+				})
+			},
+			getHomeGoods(type) {
+				const page = this.goods[type].page + 1;
+				getHomeGoods(type, 1).then(res => {
+					// console.log(res);
+					this.goods[type].list.push(...res.data.list);
+					this.goods[type].page++;
+				}).catch(err => {
+					// console.log(err);
+				})
+			},
+			tabClick(index) {
+				// console.log(index);
+				switch (index) {
+					case 0:
+						this.currentType = 'pop'
+						break;
+					case 1:
+						this.currentType = 'new'
+						break;
+					case 2:
+						this.currentType = 'sell'
+						break;
+				}
+			},
+			backClick() {
+				// console.log('backClick');
+				this.$refs.scroll.scrollTo(0, 0, 500)
+			},
+			contentScroll(position) {
+				// console.log(position);
+				this.isShow = position.y < -700
+			},
+			loadMore() {
+				// console.log(1111);
+				this.getHomeGoods(this.currentType);
+				this.scroll.finishFullUp();
+			}
 		},
 		created() {
-			getHomeMultidata().then(res => {
-				// console.log(res);
-				this.banner = res.data.data.banner.list;
-				this.recommend = res.data.data.recommend.list;
-				this.keywords = res.data.data.keywords.list;
-				this.dKeyword = res.data.data.dKeyword.list;
-			}).catch(err => {
-				console.log(err);
-			})
+			this.getHomeMultidata(),
+				this.getHomeGoods('pop'),
+				this.getHomeGoods('new'),
+				this.getHomeGoods('sell')
 		}
 	}
 </script>
 
 <style scoped>
+	#home {
+		padding-top: 44px;
+		height: 100vh;
+		position: relative;
+	}
+
 	.home-nav {
 		background-color: var(--color-tint);
+		color: #fff;
+
+		position: fixed;
+		left: 0;
+		top: 0;
+		right: 0;
+		z-index: 999;
+	}
+
+	.content {
+		position: absolute;
+		top: 44px;
+		bottom: 49px;
+		left: 0;
+		right: 0;
 	}
 </style>
