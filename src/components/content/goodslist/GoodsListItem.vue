@@ -1,10 +1,12 @@
 <template>
   <div class="goods-item">
-    <img :src="goodsItem.show.img" alt="">
+    <!-- <img :src="goodsItem.show.img" @load="imageLoad"> -->
+    <img :src="goodsItem.image" @load="imageLoad">
     <div class="goods-info">
       <p>{{goodsItem.title}}</p>
-      <span class="price">{{goodsItem.price}}</span>
-      <span class="collect">{{goodsItem.cfav}}</span>
+      <!-- <span class="price">{{goodsItem.price}}</span> -->
+      <span class="words">{{goodsItem.acm}}</span>
+      <!-- <span class="collect">{{goodsItem.cfav}}</span> -->
     </div>
   </div>
 </template>
@@ -19,7 +21,12 @@
           return {}
         }
       }
-    }
+    },
+		methods: {
+			imageLoad() {
+				this.$bus.$emit('imageItemLoad')
+			}
+		}
   }
 </script>
 

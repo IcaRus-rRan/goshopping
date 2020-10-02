@@ -44,10 +44,14 @@
 		},
 		methods: {
 			scrollTo(x, y, time= 500) { 
-				this.scroll.scrollTo(x, y, time);
+				this.scroll && this.scroll.scrollTo(x, y, time);
 			},
 			finishFullUp() {
 				this.scroll.finishFullUp();
+			},
+			refresh() {
+				console.log('-----------');
+				this.scroll && this.scroll.refresh()
 			}
 		}
 	}

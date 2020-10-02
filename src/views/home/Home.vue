@@ -19,7 +19,8 @@
 			<feature-view />
 			<tab-control :tabs="tabs" 
 						 @tabClick="tabClick" />
-			<goods-list :goods='goods[currentType].list' />
+			<!-- <goods-list :goods='goods[currentType].list' /> -->
+			<goods-list :goods='recommend' />
 			<ul>
 				<li>liebiaoshuju1</li>
 				<li>liebiaoshuju2</li>
@@ -100,6 +101,7 @@
 
 <script>
 	import { getHomeMultidata, getHomeGoods } from 'network/home'
+	import { debounce } from 'common/utils.js'
 
 	import NavBar from 'components/common/navbar/NavBar.vue'
 	import TabControl from 'components/common/tabControl/TabControl.vue'
@@ -121,10 +123,16 @@
 				dKeyword: [],
 
 				tabs: ['流行', '新款', '精选'],
+				// goods: {
+				// 	'pop': { page: 0, list: [] },
+				// 	'new': { page: 0, list: [] },
+				// 	'sell': { page: 0, list: [] }
+				// },
 				goods: {
-					'pop': { page: 0, list: [] },
-					'new': { page: 0, list: [] },
-					'sell': { page: 0, list: [] }
+					type: Array,
+					default() {
+						return []
+					}
 				},
 				currentType: 'pop',
 				isShow: false
@@ -153,11 +161,11 @@
 				})
 			},
 			getHomeGoods(type) {
-				const page = this.goods[type].page + 1;
+				// const page = this.goods[type].page + 1;
 				getHomeGoods(type, 1).then(res => {
 					// console.log(res);
 					this.goods[type].list.push(...res.data.list);
-					this.goods[type].page++;
+					// this.goods[type].page++;
 				}).catch(err => {
 					// console.log(err);
 				})
@@ -192,9 +200,16 @@
 		},
 		created() {
 			this.getHomeMultidata(),
-				this.getHomeGoods('pop'),
-				this.getHomeGoods('new'),
-				this.getHomeGoods('sell')
+			this.getHomeGoods('pop'),
+			this.getHomeGoods('new'),
+			this.getHomeGoods('sell')
+			
+		},
+		mounted() {
+			const refresh = debounce(this.$refs.scroll.refresh, 200)
+			this.$bus.$on('imageItemLoad', ()=> {
+				refresh()
+			})
 		}
 	}
 </script>
