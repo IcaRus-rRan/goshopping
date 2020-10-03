@@ -32,26 +32,32 @@
 				click: true,
 				probeType: this.probeType,
 				pullUpLoad: this.pullUpLoad
-			}),
-			this.scroll.on('scroll', (position)=> {
-				// console.log(position);
-				this.$emit('scroll', position)
-			}),
-			this.scroll.on('pullingUp', ()=> {
-				console.log(1111);
-				this.$emit('pullingUP')
 			})
+
+			if (this.probeType === 2 || this.probeType === 3) {
+				this.scroll.on('scroll', (position) => {
+					// console.log(position);
+					this.$emit('scroll', position)
+				})
+			}
+
+			if (this.pullUpLoad) {
+				this.scroll.on('pullingUp', () => {
+					// console.log(1111);
+					this.$emit('pullingUp')
+				})
+			}
 		},
 		methods: {
-			scrollTo(x, y, time= 500) { 
+			scrollTo(x, y, time = 500) {
 				this.scroll && this.scroll.scrollTo(x, y, time);
 			},
-			finishFullUp() {
-				this.scroll.finishFullUp();
-			},
 			refresh() {
-				console.log('-----------');
+				// console.log('-----------');
 				this.scroll && this.scroll.refresh()
+			},
+			finishPullUp() {
+				this.scroll && this.scroll.finishPullUp()
 			}
 		}
 	}

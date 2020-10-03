@@ -1,12 +1,11 @@
 <template>
-  <div class="goods-item">
+  <div class="goods-item" @click="detailClick">
     <!-- <img :src="goodsItem.show.img" @load="imageLoad"> -->
     <img :src="goodsItem.image" @load="imageLoad">
     <div class="goods-info">
       <p>{{goodsItem.title}}</p>
-      <!-- <span class="price">{{goodsItem.price}}</span> -->
-      <span class="words">{{goodsItem.acm}}</span>
-      <!-- <span class="collect">{{goodsItem.cfav}}</span> -->
+      <span class="price">{{goodsItem.price}}</span>
+      <span class="collect">{{goodsItem.cfav}}</span>
     </div>
   </div>
 </template>
@@ -25,6 +24,10 @@
 		methods: {
 			imageLoad() {
 				this.$bus.$emit('imageItemLoad')
+			},
+			detailClick() {
+				this.$router.push('/detail/'+ this.goodsItem.acm)
+				// this.$router.push('/detail/'+ this.goodsItem.iid)
 			}
 		}
   }

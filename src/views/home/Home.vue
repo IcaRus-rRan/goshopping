@@ -6,7 +6,11 @@
 				<h4>购物街</h4>
 			</template>
 		</nav-bar>
-
+		<tab-control :tabs="tabs" 
+								 @tabClick="tabClick" 
+								 ref="tabControl1"
+								 v-show="isFixed"
+								 class="tab-control" />
 		<scroll class="content" 
 						ref="scroll" 
 						:probe-type="3" 
@@ -14,11 +18,12 @@
 						@scroll='contentScroll'
 						@pullingUp='loadMore'
 						>
-			<Home-swiper :banner='banner' />
+			<Home-swiper :banner='banner' @imageLoad="swiperImageLoad"/>
 			<recommond-view :recommend='recommend' />
 			<feature-view />
 			<tab-control :tabs="tabs" 
-						 @tabClick="tabClick" />
+								   @tabClick="tabClick" 
+									 ref="tabControl2" /> 
 			<!-- <goods-list :goods='goods[currentType].list' /> -->
 			<goods-list :goods='recommend' />
 			<ul>
@@ -134,8 +139,10 @@
 						return []
 					}
 				},
+				tabOffsetTop: 0,
 				currentType: 'pop',
-				isShow: false
+				isShow: false,
+				isFixed: false
 			}
 		},
 		components: {
@@ -183,6 +190,8 @@
 						this.currentType = 'sell'
 						break;
 				}
+				this.$refs.tabControl1.currentIndex = index;
+				this.$refs.tabControl2.currentIndex = index;
 			},
 			backClick() {
 				// console.log('backClick');
@@ -190,12 +199,17 @@
 			},
 			contentScroll(position) {
 				// console.log(position);
-				this.isShow = position.y < -700
+				this.isShow = position.y < -700;
+				this.isFixed = position.y < -this.tabOffsetTop;
 			},
 			loadMore() {
-				// console.log(1111);
+				// console.log('加载更多的方法');
 				this.getHomeGoods(this.currentType);
-				this.scroll.finishFullUp();
+				this.$refs.scroll.finishPullUp();
+			},
+			swiperImageLoad() {
+				this.tabOffsetTop =  this.$refs.tabControl2.$el.offsetTop;
+				// console.log(this.tabOffsetTop);
 			}
 		},
 		created() {
@@ -206,7 +220,7 @@
 			
 		},
 		mounted() {
-			const refresh = debounce(this.$refs.scroll.refresh, 200)
+			const refresh = debounce(this.$refs.scroll.refresh, 200);
 			this.$bus.$on('imageItemLoad', ()=> {
 				refresh()
 			})
@@ -216,23 +230,20 @@
 
 <style scoped>
 	#home {
-		padding-top: 44px;
-		height: 100vh;
 		position: relative;
+		height: 100vh;
 	}
 
 	.home-nav {
 		background-color: var(--color-tint);
 		color: #fff;
-
-		position: fixed;
-		left: 0;
-		top: 0;
-		right: 0;
-		z-index: 999;
 	}
-
+	.tab-control {
+		position: relative;
+		z-index: 9;
+	}
 	.content {
+		overflow: hidden;
 		position: absolute;
 		top: 44px;
 		bottom: 49px;

@@ -28,7 +28,6 @@
 		line-height: 44px;
 		text-align: center;
 		/* background-color: pink; */
-		color: white;
 		box-shadow: 0 1px 11px rgba(100, 100, 100, 0.2);
 	}
 
