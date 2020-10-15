@@ -105,7 +105,7 @@
 </template>
 
 <script>
-	import { getHomeMultidata, getHomeGoods } from 'network/home'
+	import { getHomeMultidata,getRecord,getHomeGoods } from 'network/home'
 	import { debounce } from 'common/utils.js'
 
 	import NavBar from 'components/common/navbar/NavBar.vue'
@@ -166,6 +166,13 @@
 				}).catch(err => {
 					console.log(err);
 				})
+			}, 
+			getRecord(){
+				getRecord().then(res => {
+					console.log(res);
+				}).catch(err => {
+					console.log(err);
+				})
 			},
 			getHomeGoods(type) {
 				// const page = this.goods[type].page + 1;
@@ -214,6 +221,7 @@
 		},
 		created() {
 			this.getHomeMultidata(),
+			this.getRecord(),
 			this.getHomeGoods('pop'),
 			this.getHomeGoods('new'),
 			this.getHomeGoods('sell')
